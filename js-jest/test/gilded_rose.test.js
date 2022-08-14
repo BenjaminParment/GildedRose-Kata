@@ -43,6 +43,14 @@ describe("Gilded Rose", () => {
         expect(items[0].sellIn).toBe(-1);
         expect(items[0].quality).toBe(12);
       });
+
+      it("Should set quality to 50 when quality is set to 49", () => {
+        item.quality = 49;
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].sellIn).toBe(-1);
+        expect(items[0].quality).toBe(50);
+      });
     });
   });
 
