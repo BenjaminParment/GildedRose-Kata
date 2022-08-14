@@ -88,14 +88,14 @@ class Shop {
     let item;
 
     this.items.forEach((i) => {
-      switch (i.name) {
-        case AGED_BRIE:
+      switch (true) {
+        case i.name.includes(AGED_BRIE):
           item = new AgedBrie(i.name, i.sellIn, i.quality);
           break;
-        case BACKSTAGE_PASS:
+        case i.name.includes(BACKSTAGE_PASS):
           item = new BackstagePass(i.name, i.sellIn, i.quality);
           break;
-        case SULFURAS:
+        case i.name.includes(SULFURAS):
           item = new Legendary(i.name, i.sellIn, i.quality);
           break;
         default:
