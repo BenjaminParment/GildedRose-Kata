@@ -3,7 +3,7 @@ const { AGED_BRIE, BACKSTAGE_PASS, SULFURAS } = require("../const/index.js");
 
 describe("Gilded Rose", () => {
   let item;
-  let gildedrose;
+  let gildedRose;
   let items;
 
   beforeEach(() => {

@@ -1,3 +1,4 @@
+// Consts
 const { AGED_BRIE, BACKSTAGE_PASS, SULFURAS } = require("../const/index.js");
 
 class Item {
@@ -8,78 +9,107 @@ class Item {
   }
 }
 
+class _Item extends Item {
+  static handleQuality;
+
+  conjuredMultiplier = this.name.includes("Conjured") ? 2 : 1;
+  handleSellIn = () => (this.sellIn = this.sellIn - 1);
+  canQualityIncrease = () => this.quality < 50;
+  isExpired = () => this.sellIn <= 0;
+}
+
+class Common extends _Item {
+  handleQuality() {
+    if (this.quality) {
+      this.isExpired()
+        ? (this.quality -= 2 * this.conjuredMultiplier)
+        : (this.quality -= 1 * this.conjuredMultiplier);
+    }
+  }
+}
+
+class AgedBrie extends _Item {
+  handleQuality = () => {
+    if (this.canQualityIncrease()) {
+      if (!this.isExpired()) {
+        this.quality += 1 * this.conjuredMultiplier;
+      } else {
+        this.quality += 2 * this.conjuredMultiplier;
+      }
+
+      if (this.quality > 50) {
+        this.quality = 50;
+      }
+    }
+  };
+}
+
+class BackstagePass extends _Item {
+  handleQuality = () => {
+    if (this.isExpired()) {
+      this.quality = 0;
+    } else if (this.canQualityIncrease()) {
+      switch (true) {
+        case this.sellIn > 10:
+          this.quality += 1 * this.conjuredMultiplier;
+          break;
+        case this.sellIn > 5:
+          this.quality += 2 * this.conjuredMultiplier;
+          break;
+        default:
+          this.quality += 3 * this.conjuredMultiplier;
+          break;
+      }
+
+      if (this.quality > 50) {
+        this.quality = 50;
+      }
+    }
+  };
+}
+
+class Legendary extends _Item {
+  handleQuality = () => {
+    this.quality = this.quality;
+  };
+
+  handleSellIn = () => {
+    this.sellIn = this.sellIn;
+  };
+}
+
 class Shop {
   constructor(items = []) {
     this.items = items;
   }
 
   updateQuality() {
-    this.items.forEach((item) => {
-      this.handleQuality(item);
-      this.handleSellIn(item);
-      this.isExpired(item);
+    const ret = [];
+    let item;
+
+    this.items.forEach((i) => {
+      switch (i.name) {
+        case AGED_BRIE:
+          item = new AgedBrie(i.name, i.sellIn, i.quality);
+          break;
+        case BACKSTAGE_PASS:
+          item = new BackstagePass(i.name, i.sellIn, i.quality);
+          break;
+        case SULFURAS:
+          item = new Legendary(i.name, i.sellIn, i.quality);
+          break;
+        default:
+          item = new Common(i.name, i.sellIn, i.quality);
+          break;
+      }
+
+      item.handleQuality();
+      item.handleSellIn();
+      ret.push(item);
     });
 
-    return this.items;
+    return ret;
   }
-
-  handleQuality = (item) => {
-    if (item.name != AGED_BRIE && item.name != BACKSTAGE_PASS) {
-      if (item.quality > 0) {
-        if (item.name != SULFURAS) {
-          item.quality = item.quality - 1;
-        }
-      }
-    } else {
-      if (item.quality < 50) {
-        item.quality = item.quality + 1;
-        if (item.name == BACKSTAGE_PASS) {
-          if (item.sellIn < 11) {
-            if (item.quality < 50) {
-              item.quality = item.quality + 1;
-            }
-          }
-          if (item.sellIn < 6) {
-            if (item.quality < 50) {
-              item.quality = item.quality + 1;
-            }
-          }
-        }
-      }
-    }
-  };
-
-  handleSellIn = (item) => {
-    if (!this.isItemLegendary(item)) {
-      item.sellIn = item.sellIn - 1;
-    }
-  };
-
-  isItemLegendary = (item) => item.name === SULFURAS;
-
-  isExpired = (item) => {
-    if (item.sellIn < 0) {
-      this.handleExpired(item);
-    }
-  };
-
-  handleExpired = (item) => {
-    if (item.name != AGED_BRIE) {
-      if (item.name != BACKSTAGE_PASS) {
-        if (item.quality > 0) {
-          if (item.name != SULFURAS) {
-            item.quality = item.quality - 1;
-          }
-        }
-      } else {
-        item.quality = item.quality - item.quality;
-      }
-    } else {
-      if (item.quality < 50) {
-        item.quality = item.quality + 1;
-      }
-    }
-  };
 }
 
 module.exports = {
