@@ -132,39 +132,47 @@ describe("Gilded Rose", () => {
     });
   });
 
-  // // RANDOM ITEM
-  // describe("Given the aged brie article", () => {
-  //   beforeEach(() => (item.name = AGED_BRIE));
+  // COMMON ITEM
+  describe("Given a common article article", () => {
+    beforeEach(() => (item.name = "foo"));
 
-  //   describe("When its sellin is above 0", () => {
-  //     beforeEach(() => (item.sellIn = 10));
+    describe("When its sellin is above 0", () => {
+      beforeEach(() => (item.sellIn = 10));
 
-  //     it("Should increase quality and decrease sellin by 1 on update", () => {
-  //       item.quality = 10;
-  //       gildedRose = new Shop([item]);
-  //       items = gildedRose.updateQuality();
-  //       expect(items[0].sellIn).toBe(9);
-  //       expect(items[0].quality).toBe(11);
-  //     });
+      it("Should decrease both quality and sellin by 1 on update", () => {
+        item.quality = 10;
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].sellIn).toBe(9);
+        expect(items[0].quality).toBe(9);
+      });
 
-  //     it("Should not increase quality if set at 50", () => {
-  //       item.quality = 50;
-  //       gildedRose = new Shop([item]);
-  //       items = gildedRose.updateQuality();
-  //       expect(items[0].sellIn).toBe(9);
-  //       expect(items[0].quality).toBe(50);
-  //     });
-  //   });
+      it("Should not decrease quality if that is set to 0 or less", () => {
+        item.quality = 0;
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].sellIn).toBe(9);
+        expect(items[0].quality).toBe(0);
+      });
+    });
 
-  //   describe("When its sellin is set to 0 or less", () => {
-  //     beforeEach(() => ((item.sellIn = 0), (item.quality = 10)));
+    describe("When its sellin is set to 0 or less", () => {
+      beforeEach(() => ((item.sellIn = 0), (item.quality = 10)));
 
-  //     it("Should decrement sellin on updates while increasing the quality by two", () => {
-  //       gildedRose = new Shop([item]);
-  //       items = gildedRose.updateQuality();
-  //       expect(items[0].sellIn).toBe(-1);
-  //       expect(items[0].quality).toBe(12);
-  //     });
-  //   });
-  // });
+      it("Should decrement sellin and decrease quality by 2", () => {
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].sellIn).toBe(-1);
+        expect(items[0].quality).toBe(8);
+      });
+
+      it("Should not change quality if already set to 0", () => {
+        item.quality = 0;
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].sellIn).toBe(-1);
+        expect(items[0].quality).toBe(0);
+      });
+    });
+  });
 });
