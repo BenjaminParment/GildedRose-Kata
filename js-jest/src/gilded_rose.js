@@ -28,7 +28,7 @@ class Common extends _Item {
   }
 }
 
-class AgedBrie extends _Item {
+class AgesWithTime extends _Item {
   handleQuality = () => {
     if (this.canQualityIncrease()) {
       if (!this.isExpired()) {
@@ -44,7 +44,7 @@ class AgedBrie extends _Item {
   };
 }
 
-class BackstagePass extends _Item {
+class AgesAndResetsOnExpire extends _Item {
   handleQuality = () => {
     if (this.isExpired()) {
       this.quality = 0;
@@ -69,18 +69,14 @@ class BackstagePass extends _Item {
 }
 
 class Legendary extends _Item {
-  handleQuality = () => {
-    this.quality = this.quality;
-  };
+  handleQuality = () => (this.quality = this.quality);
 
-  handleSellIn = () => {
-    this.sellIn = this.sellIn;
-  };
+  handleSellIn = () => (this.sellIn = this.sellIn);
 }
 
 const itemMap = {
-  aged_brie: AgedBrie,
-  backstage_pass: BackstagePass,
+  aged_brie: AgesWithTime,
+  backstage_pass: AgesAndResetsOnExpire,
   legendary: Legendary,
   common: Common,
 };
