@@ -183,4 +183,62 @@ describe("Gilded Rose", () => {
       });
     });
   });
+
+  describe("Given a conjured aged brie", () => {
+    beforeEach(() => (item.name = `Conjured ${AGED_BRIE}`));
+
+    describe("When its sellIn val is above 0", () => {
+      beforeEach(() => ((item.sellIn = 10), (item.quality = 10)));
+
+      it("Should increase the quality by 2 on update", () => {
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].quality).toBe(12);
+      });
+    });
+
+    describe("When its sellIn val is less or equal to 0", () => {
+      beforeEach(() => ((item.sellIn = 0), (item.quality = 10)));
+
+      it("Should increase the quality by 4 on update", () => {
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].quality).toBe(14);
+      });
+    });
+  });
+
+  describe("Given a conjured backstage pass", () => {
+    beforeEach(() => (item.name = `Conjured ${BACKSTAGE_PASS}`));
+
+    describe("When its sellIn val is above 10", () => {
+      beforeEach(() => ((item.sellIn = 11), (item.quality = 10)));
+
+      it("Should increase the quality by 2 on update", () => {
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].quality).toBe(12);
+      });
+    });
+
+    describe("When its sellIn val is between 5 and 10", () => {
+      beforeEach(() => ((item.sellIn = 8), (item.quality = 10)));
+
+      it("Should increase the quality by 4 on update", () => {
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].quality).toBe(14);
+      });
+    });
+
+    describe("When its sellIn val is between 0 and 5", () => {
+      beforeEach(() => ((item.sellIn = 4), (item.quality = 10)));
+
+      it("Should increase the quality by 6 on update", () => {
+        gildedRose = new Shop([item]);
+        items = gildedRose.updateQuality();
+        expect(items[0].quality).toBe(16);
+      });
+    });
+  });
 });
