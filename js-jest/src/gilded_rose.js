@@ -9,40 +9,6 @@ class Item {
   }
 }
 
-class Shop {
-  constructor(items = []) {
-    this.items = items;
-  }
-
-  updateQuality() {
-    const ret = [];
-    let item;
-
-    this.items.forEach((i) => {
-      switch (true) {
-        case i.name.includes(AGED_BRIE):
-          item = new AgedBrie(i.name, i.sellIn, i.quality);
-          break;
-        case i.name.includes(BACKSTAGE_PASS):
-          item = new BackstagePass(i.name, i.sellIn, i.quality);
-          break;
-        case i.name.includes(SULFURAS):
-          item = new Legendary(i.name, i.sellIn, i.quality);
-          break;
-        default:
-          item = new Common(i.name, i.sellIn, i.quality);
-          break;
-      }
-
-      item.handleQuality();
-      item.handleSellIn();
-      ret.push(item);
-    });
-
-    return ret;
-  }
-}
-
 class _Item extends Item {
   static handleQuality;
 
@@ -110,6 +76,47 @@ class Legendary extends _Item {
   handleSellIn = () => {
     this.sellIn = this.sellIn;
   };
+}
+
+const itemMap = {
+  aged_brie: AgedBrie,
+  backstage_pass: BackstagePass,
+  legendary: Legendary,
+  common: Common,
+};
+
+class Shop {
+  constructor(items = []) {
+    this.items = items;
+  }
+
+  getItemType(item) {
+    switch (true) {
+      case item.name.includes(AGED_BRIE):
+        return "aged_brie";
+      case item.name.includes(BACKSTAGE_PASS):
+        return "backstage_pass";
+      case item.name.includes(SULFURAS):
+        return "legendary";
+      default:
+        return "common";
+    }
+  }
+
+  updateQuality() {
+    const ret = [];
+    let item;
+
+    this.items.forEach((i) => {
+      item = new itemMap[this.getItemType(i)](i.name, i.sellIn, i.quality);
+
+      item.handleQuality();
+      item.handleSellIn();
+      ret.push(item);
+    });
+
+    return ret;
+  }
 }
 
 module.exports = {
